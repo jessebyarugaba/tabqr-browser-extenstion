@@ -23,7 +23,7 @@ No accounts. No syncing. No setup.
 
 ## Screenshots
 
-<img src="./screenshots/tabqr screenshot.PNG" width="420" />
+<img src="./screenshots/tabqr screenshot.PNG" alt="TabQR Preview" />
 
 ---
 
