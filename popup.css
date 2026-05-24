@@ -1,0 +1,418 @@
+/* ── Reset & base ──────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Light theme */
+  --bg:          #f8f7f4;
+  --surface:     #ffffff;
+  --border:      #e8e4de;
+  --border-soft: #f0ece6;
+  --text-1:      #1a1814;
+  --text-2:      #6b6660;
+  --text-3:      #a09b95;
+  --accent:      #1a1814;
+  --accent-fg:   #ffffff;
+  --qr-bg:       #ffffff;
+  --qr-fg:       #1a1814;
+  --success:     #16a34a;
+  --wa-bg:       #25d366;
+  --wa-fg:       #ffffff;
+  --shadow-sm:   0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:   0 4px 16px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.05);
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --font-sans:   'DM Sans', system-ui, sans-serif;
+  --font-mono:   'DM Mono', monospace;
+  --transition:  140ms cubic-bezier(0.4,0,0.2,1);
+}
+
+/* Dark theme — toggled via class on <html> */
+html.dark {
+  --bg:          #141210;
+  --surface:     #1e1c19;
+  --border:      #2e2b27;
+  --border-soft: #252320;
+  --text-1:      #f0ece6;
+  --text-2:      #8a8480;
+  --text-3:      #5a5652;
+  --accent:      #f0ece6;
+  --accent-fg:   #1a1814;
+  --qr-bg:       #f8f7f4;
+  --qr-fg:       #1a1814;
+  --shadow-sm:   0 1px 3px rgba(0,0,0,.3);
+  --shadow-md:   0 4px 16px rgba(0,0,0,.4);
+}
+
+/* ── Document ───────────────────────────────────────────────── */
+html {
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  color-scheme: light;
+}
+html.dark { color-scheme: dark; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text-1);
+  width: 360px;
+  min-height: 0;
+  overflow: hidden;
+  transition: background var(--transition), color var(--transition);
+}
+
+/* ── Popup card ─────────────────────────────────────────────── */
+.popup {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  animation: popIn 160ms cubic-bezier(0.34,1.4,0.64,1) both;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.97) translateY(4px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);   }
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo {
+  color: var(--text-1);
+  display: flex;
+  align-items: center;
+  opacity: 0.9;
+}
+
+.app-name {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-1);
+}
+
+.theme-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+.theme-btn:hover {
+  background: var(--border-soft);
+  color: var(--text-1);
+}
+.theme-btn:active { transform: scale(0.94); }
+
+/* Show sun in dark mode, moon in light mode */
+.icon-moon { display: block; }
+.icon-sun  { display: none; }
+html.dark .icon-moon { display: none; }
+html.dark .icon-sun  { display: block; }
+
+/* ── Page info ──────────────────────────────────────────────── */
+.page-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-soft);
+  min-height: 56px;
+}
+
+.favicon {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 200ms;
+}
+.favicon.loaded { opacity: 1; }
+.favicon.hidden { display: none; }
+
+.page-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.page-title {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+.page-url {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+/* ── QR area ────────────────────────────────────────────────── */
+.qr-wrapper {
+  padding: 20px 16px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-container {
+  background: var(--qr-bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  padding: 16px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 232px;
+  height: 232px;
+  transition: background var(--transition), border-color var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Corner decorations on QR card */
+.qr-container::before,
+.qr-container::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-color: var(--text-3);
+  border-style: solid;
+  opacity: 0.25;
+}
+.qr-container::before {
+  top: 8px; left: 8px;
+  border-width: 2px 0 0 2px;
+  border-radius: 2px 0 0 0;
+}
+.qr-container::after {
+  bottom: 8px; right: 8px;
+  border-width: 0 2px 2px 0;
+  border-radius: 0 0 2px 0;
+}
+
+/* Canvas QR element */
+.qr-container canvas {
+  border-radius: 4px;
+  animation: qrFadeIn 220ms ease both;
+  display: block;
+}
+
+@keyframes qrFadeIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+
+/* Skeleton shimmer while loading */
+.qr-container.loading::after {
+  content: none; /* disable corner decoration */
+}
+.qr-container.loading::before {
+  content: none;
+}
+.qr-container.loading {
+  background: linear-gradient(
+    90deg,
+    var(--border-soft) 25%,
+    var(--border) 50%,
+    var(--border-soft) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+  border: none;
+  box-shadow: none;
+}
+
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+/* Error state */
+.qr-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text-2);
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}
+.qr-error svg { opacity: 0.4; }
+.qr-error p {
+  font-size: 12px;
+  line-height: 1.5;
+  max-width: 160px;
+  color: var(--text-2);
+}
+
+/* ── Action buttons ─────────────────────────────────────────── */
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 0 16px 14px;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+  letter-spacing: -0.01em;
+}
+.btn:active { transform: scale(0.96); }
+
+/* Primary — Copy Link */
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-fg);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-sm);
+}
+.btn-primary:hover {
+  opacity: 0.88;
+  box-shadow: var(--shadow-md);
+}
+.btn-primary.success {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+/* WhatsApp */
+.btn-whatsapp {
+  background: var(--wa-bg);
+  color: var(--wa-fg);
+  border-color: var(--wa-bg);
+}
+.btn-whatsapp:hover { filter: brightness(1.06); }
+
+/* Download */
+.btn-download {
+  background: var(--surface);
+  color: var(--text-1);
+}
+.btn-download:hover {
+  background: var(--border-soft);
+  border-color: var(--text-3);
+}
+
+/* Share */
+.btn-share {
+  background: var(--surface);
+  color: var(--text-1);
+}
+.btn-share:hover {
+  background: var(--border-soft);
+  border-color: var(--text-3);
+}
+
+/* When share button is shown, expand download to half too */
+.actions.has-share .btn-download,
+.actions.has-share .btn-share {
+  /* already half-width from grid */
+}
+
+/* ── Footer ─────────────────────────────────────────────────── */
+.footer {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 12px;
+  color: #8b8b8b;
+  text-align: center;
+}
+
+.credit {
+  color: #6b7280;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.2s ease;
+}
+
+.credit:hover {
+  opacity: 0.7;
+  text-decoration: underline;
+}
+
+/* Dark mode */
+.dark .footer {
+  border-top-color: rgba(255,255,255,0.08);
+  color: #9ca3af;
+}
+
+.dark .credit {
+  color: #cbd5e1;
+}
+
+/* ── Scrollbar (if ever needed) ─────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+
+.qr-container canvas,
+.qr-container img {
+  width: 220px;
+  height: 220px;
+  display: block;
+}
+
+.qr-container canvas {
+  width: 260px !important;
+  height: 260px !important;
+  border-radius: 24px;
+  background: white;
+  padding: 12px;
+  box-sizing: border-box;
+}
